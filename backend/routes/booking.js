@@ -62,6 +62,7 @@ router.post('/verification', async (req, res) => {
             const paymentId = req.body.payload.payment.entity.id;
             const orderId = req.body.payload.payment.entity.order_id;
             const totalAmount = req.body.payload.payment.entity.amount;
+            console.log(req.body.payload)
 
             if (isNaN(numberOfTickets) || numberOfTickets <= 0) {
                 return res.status(400).json({ message: "Invalid number of tickets" });
@@ -118,20 +119,35 @@ router.post('/verification', async (req, res) => {
     }
 });
 
+
 router.post('/razorpay', async (req, res) => {
-    const { totalAmount } = req.body;
+    const { totalAmount, movie , showId, numberOfTickets } = req.body;
     const amount = totalAmount * 100;
     const currency = 'INR';
     const payment_capture = 1;
-
-    const options = {
-        amount,
-        currency,
-        receipt: shortid.generate(),
-        payment_capture,
-    };
+    console.log(totalAmount, movie, showId, numberOfTickets)
 
     try {
+        const existingMovie = await Movie.findById(movie);
+        if (!existingMovie || existingMovie.disabled) {
+
+            return res.status(404).json({ message: "Invalid movie" });
+        }
+
+        const existingShow = existingMovie.shows.find(show => show._id.toString() === showId);
+        if (!existingShow || existingShow.availableSeats < numberOfTickets) {
+
+
+            return res.status(400).json({ message: "Not enough available seats for booking" });
+        }
+
+        const options = {
+            amount,
+            currency,
+            receipt: shortid.generate(),
+            payment_capture,
+        };
+
         const response = await razorpay.orders.create(options);
         res.json({
             id: response.id,
@@ -143,6 +159,7 @@ router.post('/razorpay', async (req, res) => {
         res.status(500).json({ message: "Internal Server Error" });
     }
 });
+
 
 router.post("/add", adminAuth, async (req, res) => {
     const { movie, showId, numberOfTickets } = req.body;

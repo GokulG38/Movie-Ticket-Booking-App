@@ -27,7 +27,7 @@ function SignUpForm() {
             setError("Please fill in all fields");
             return;
         }
-        setError(""); // Clear any previous error
+        setError(""); 
         handleSignup(input)
             .then(() => navigate("/login"))
             .catch((err) => setError(err.message));

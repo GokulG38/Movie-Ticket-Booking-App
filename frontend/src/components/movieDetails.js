@@ -120,11 +120,6 @@ const MovieDetails = () => {
                                             <button id="bookticketButton" className="bg-gray-800 text-white font-bold py-2 px-4 rounded mt-2 hover:bg-gray-700 mb-3">Book Ticket</button>
                                         </Link>
                                     )}
-                                    {/* {isAdmin && !isUser && (
-                                        <Link to={`/admin/${adminId}/movie/${movieId}/collection/${shows._id}`}>
-                                            <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded mt-2 hover:bg-gray-700 mb-3">Collection</button>
-                                        </Link>
-                                    )} */}
                                     {!isAdmin && !isUser && (
                                         <Link to="/login">
                                             <button className="bg-gray-800 text-white font-bold py-2 px-4 rounded mt-2 hover:bg-gray-700 mb-3">Book Ticket</button>
