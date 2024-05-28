@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from "react";
 import CheckAdmin from "../utils/checkAdmin";
 import { useNavigate, useParams } from "react-router-dom";
@@ -7,6 +8,8 @@ import { handleMovieUpdates, handleAddMovie } from "../utils/Authentication";
 const MovieForm = ({ purpose }) => {
     const movieId = useParams().movieId;
     const Navigate = useNavigate();
+    const [error, setError] = useState("");
+    
 
     const getDefaultShowTime = () => {
         const tomorrow = new Date();
@@ -122,30 +125,33 @@ const MovieForm = ({ purpose }) => {
     };
 
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { title, description, posterUrl, starring, ticketPrice, disabled, shows } = input;
+        const { title, description, posterUrl, starring, ticketPrice, shows } = input;
 
         if (!title.trim() || !description.trim() || !posterUrl.trim() || !starring.trim() || isNaN(ticketPrice) || ticketPrice <= 0) {
-            console.log("Please fill out all fields and ensure ticket price is a positive number.");
+            setError("Please fill out all fields and ensure ticket price is a positive number.");
             return;
         }
         if (shows.length === 0 || shows.some(show => !show.showTime.trim() || isNaN(show.availableSeats))) {
-            console.log("Invalid show timings or available seats.");
+            setError("Invalid show timings or available seats.");
             return;
         }
         if (shows.some(show => show.availableSeats < 0)) {
-            console.log("Available seats cannot be negative.");
+            setError("Available seats cannot be negative.");
             return;
         }
-        if (purpose === "updation") {
-            await handleMovieUpdates(movieId, input);
-        } else if (purpose === "add") {
-            console.log(input)
-            await handleAddMovie(input);
+        setError(""); 
+        try {
+            if (purpose === "updation") {
+                await handleMovieUpdates(movieId, input);
+            } else if (purpose === "add") {
+                await handleAddMovie(input);
+            }
+            Navigate("/");
+        } catch (err) {
+            setError(err.message);
         }
-        Navigate("/");
     };
 
 
@@ -272,6 +278,10 @@ const MovieForm = ({ purpose }) => {
                         </div>
                     </div>
                 </div>
+
+                {error && (
+                    <div className="text-red-500 text-center mb-4">{error}</div>
+                )}
                 <button
                     className="bg-gray-700 hover:bg-gray-800 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-4 ml-auto"
                     type="submit"
