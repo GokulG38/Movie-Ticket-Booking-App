@@ -161,60 +161,60 @@ router.post('/razorpay', async (req, res) => {
 });
 
 
-router.post("/add", adminAuth, async (req, res) => {
-    const { movie, showId, numberOfTickets } = req.body;
+// router.post("/add", adminAuth, async (req, res) => {
+//     const { movie, showId, numberOfTickets } = req.body;
 
-    try {
-        const parsedNumberOfTickets = parseInt(numberOfTickets);
+//     try {
+//         const parsedNumberOfTickets = parseInt(numberOfTickets);
 
-        if (isNaN(parsedNumberOfTickets) || parsedNumberOfTickets <= 0) {
-            return res.status(400).json({ message: "Invalid number of tickets" });
-        }
+//         if (isNaN(parsedNumberOfTickets) || parsedNumberOfTickets <= 0) {
+//             return res.status(400).json({ message: "Invalid number of tickets" });
+//         }
 
-        const session = await mongoose.startSession();
-        session.startTransaction();
+//         const session = await mongoose.startSession();
+//         session.startTransaction();
 
-        const existingMovie = await Movie.findById(movie).session(session);
-        const existingUser = await User.findById(req.userId).session(session);
+//         const existingMovie = await Movie.findById(movie).session(session);
+//         const existingUser = await User.findById(req.userId).session(session);
 
-        if (!existingMovie || existingMovie.disabled || !existingUser) {
-            await session.abortTransaction();
-            session.endSession();
-            return res.status(404).json({ message: "Invalid movie or user" });
-        }
+//         if (!existingMovie || existingMovie.disabled || !existingUser) {
+//             await session.abortTransaction();
+//             session.endSession();
+//             return res.status(404).json({ message: "Invalid movie or user" });
+//         }
 
-        const existingShow = existingMovie.shows.find(show => show._id.toString() === showId);
+//         const existingShow = existingMovie.shows.find(show => show._id.toString() === showId);
 
-        if (!existingShow || existingShow.availableSeats < parsedNumberOfTickets) {
-            await session.abortTransaction();
-            session.endSession();
-            return res.status(400).json({ message: "Not enough available seats for booking" });
-        }
+//         if (!existingShow || existingShow.availableSeats < parsedNumberOfTickets) {
+//             await session.abortTransaction();
+//             session.endSession();
+//             return res.status(400).json({ message: "Not enough available seats for booking" });
+//         }
 
-        const booking = new Book({
-            movie,
-            showId,
-            numberOfTickets: parsedNumberOfTickets,
-            user: req.userId,
-        });
+//         const booking = new Book({
+//             movie,
+//             showId,
+//             numberOfTickets: parsedNumberOfTickets,
+//             user: req.userId,
+//         });
 
-        existingUser.bookings.push(booking);
-        existingMovie.bookings.push(booking);
-        existingShow.availableSeats -= parsedNumberOfTickets;
+//         existingUser.bookings.push(booking);
+//         existingMovie.bookings.push(booking);
+//         existingShow.availableSeats -= parsedNumberOfTickets;
 
-        await existingUser.save({ session });
-        await existingMovie.save({ session });
-        await booking.save({ session });
+//         await existingUser.save({ session });
+//         await existingMovie.save({ session });
+//         await booking.save({ session });
 
-        await session.commitTransaction();
-        session.endSession();
+//         await session.commitTransaction();
+//         session.endSession();
 
-        return res.status(201).json({ booking });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({ message: "Internal Server Error" });
-    }
-});
+//         return res.status(201).json({ booking });
+//     } catch (err) {
+//         console.error(err);
+//         return res.status(500).json({ message: "Internal Server Error" });
+//     }
+// });
 
 router.get("/:id", userAuth || adminAuth, async (req, res) => {
     const userId = req.params.id;

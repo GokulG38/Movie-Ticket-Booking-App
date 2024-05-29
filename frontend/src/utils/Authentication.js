@@ -24,20 +24,20 @@ const sendUserLogRequest = async (data) => {
     }
 };
 
-const handleTicketBooking = async ({ userId, movieId, showId, numberOfTickets }) => {
-    try {
-        const userToken = localStorage.getItem('userToken');
-        if (!userToken) throw new Error('User token not found');
+// const handleTicketBooking = async ({ userId, movieId, showId, numberOfTickets }) => {
+//     try {
+//         const userToken = localStorage.getItem('userToken');
+//         if (!userToken) throw new Error('User token not found');
 
-        const config = { headers: { 'Authorization': `Bearer ${userToken}` } };
-        const data = { user:userId, movie:movieId, showId, numberOfTickets }; 
-        console.log(data)
-        const response = await axios.post('http://localhost:5000/booking/add', data, config);
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
+//         const config = { headers: { 'Authorization': `Bearer ${userToken}` } };
+//         const data = { user:userId, movie:movieId, showId, numberOfTickets }; 
+//         console.log(data)
+//         const response = await axios.post('http://localhost:5000/booking/add', data, config);
+//         return response.data;
+//     } catch (error) {
+//         throw error;
+//     }
+// };
 
 const handleMovieUpdates=async(movieId, input)=>{
     try{
@@ -98,4 +98,4 @@ const handleSignup = async(input)=>{
     }
 }
 
-export { sendAdminLogRequest, sendUserLogRequest, handleTicketBooking, handleMovieUpdates , handleSignup, handleAddMovie};
+export { sendAdminLogRequest, sendUserLogRequest, handleMovieUpdates , handleSignup, handleAddMovie};

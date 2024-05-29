@@ -29,7 +29,7 @@ const dispatch = useDispatch();
       dispatch(adminLogin());
 
     }
-  }, [dispatch]);
+  }, []);
 
   return (
       <Router>
@@ -39,9 +39,7 @@ const dispatch = useDispatch();
             <Route path="/signup" element={<SignUpForm />} />
             <Route path="/login" element={<LoginForm user="user"/>} />
             <Route path="/admin/login" element={<LoginForm user="admin" />} />
-
             <Route path="/movie/:movieId" element={<><Header/><MovieDetails /></>} /> 
-
             <Route path="/user/:userId/movie/:movieId/bookTickets/:showId" element={<><Header/><BookTicket/></>} /> 
             <Route path="/user/:userId/myBookings" element={<><Header/><MyBookings/></>} />
             <Route path="/admin/:adminId/addMovie" element={<><Header/><MovieForm purpose="add"/></>} /> 
